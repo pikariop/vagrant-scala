@@ -1,0 +1,54 @@
+---
+
+- hosts: scalatunkki
+  user: vagrant
+  sudo: yes
+
+  vars:
+    src_dir: /vagrant
+    app_name: scalatunkki
+
+  tasks:
+
+    - name: apt | Install python-software-properties
+      apt: pkg=python-software-properties state=present update_cache=yes
+
+#    - name: apt | Add repositories
+#      apt_repository: repo='{{ item }}' state=present
+#      with_items:
+#      #- 'ppa:vincent-c/ppa'
+
+    - name: apt | Install packages
+      apt: pkg={{ item }} state=installed update_cache=yes
+      with_items:
+        - build-essential
+        - scala
+        - junit
+
+        # Utils
+        - git
+        - curl
+        - vim
+        - zsh
+        - htop
+        - fortune-mod
+#        - ponysay
+
+    - name: Download sbt deb package
+      get_url: dest=/home/vagrant/sbt.deb
+               url='http://repo.scala-sbt.org/scalasbt/sbt-native-packages/org/scala-sbt/sbt/0.13.1/sbt.deb'
+
+    - name: Install sbt
+      shell: dpkg -i /home/vagrant/sbt.deb
+
+    - name: Fetch oh-my-zsh
+      get_url: dest=/home/vagrant/oh-my-zsh.sh
+               url='https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/install.sh'
+
+
+
+    # Todo add ponies
+
+#    - name: Update MOTD
+#      copy: src=templates/20-ponies.motd dest=/etc/update-motd.d/20-ponies owner=root group=root mode=0775
+
